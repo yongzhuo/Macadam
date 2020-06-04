@@ -1,0 +1,83 @@
+
+
+1. Kashgari-2
+   1.0 框架: tensorflow 1.14+, tensorflow2
+   1.1 基本架构: corpus-preprocess[text, label, gen]  ->  embedd[bert4keras]  ->  model
+   1.2 支持: text-classification, sequence-labeling
+   1.3 说明: * corpus输入为data of list, 全部转为 yield, 输入(list,path), 然后转为BatchDataGenerator, 相当于进行了4次shuffle(data/shuffle/text/label),
+            * preprocess全部使用text-preprocess, label-preprocess且分开, 且都为numerize_samples(onehot区分),
+            * ABCGenerator使用Iterable和ABC, generator shuffle使用中间变量buffer进行pop,
+            * abc-embedding, abc-proprecess, abc-corpus, abc-model等class级别操作,
+            * CRF使用bert4keras的等, 没有对embedding的输出进行操作,
+            * 字典(min-count)-文本长度(rate*0.95) auto模式,
+            * preprocess, embedding, model, task等全部设置json保存和info版本信息等,
+            * fit全部使用fit_generator, 支持evaluate和predict_entities
+            * save输出为一个.h5文件和一个.info配置文件, h5文件保存weights, info文件保存各种信息,
+                包括hyper_parameters/ tf_model / embedding / text_processor / label_processor / tf_version/ kashgari_version等
+   1.4 优缺点
+       优点: 简洁易用, 需要的代码量少, 配置较全embedding/graph等, 依赖bert4keras或keras-bert/gensim等工具
+       缺点: 高度定制化, 不能自己重新定义, graph/loss/metrics/params等不可自定义, 大规模数据不支持
+
+
+
+2. fastNLP
+   2.0 框架: torch
+   2.1 基本框架: DataSet数据读取与数据预处理(Dict, Instance, List), 由一个trainer等控制Dataset/Trainer/Loss/Optimizer等
+   2.2 支持: qa, cws, classification, coreference, matching, summarization等经典任务
+   2.3 说明:
+           * 示例最完善, 包括支持中任务的所有数据集smaple以及python代码, 如cmrc/cws_pku/ChnSentiCorp/weibo_NER/LCQMC
+           * 由core,embeddings,io,models,modules五大模块组成, 支持常见embedding, 包括了char/static/stack/contextual/elmo/bert/roberta/gpt2等embedding
+           * 支持pipe与分布式
+           * 文档与案例较多, 是复旦大学NLP实验室的开源项目
+           * 模块化, embedding/encode/decode作了区分
+   2.4 优缺点:
+       优点: 新(soft), 简单易用, 任务覆盖广, IO/embed/model/train等这几块间模块化较好, 支持pipe
+       缺点: model这一模块custom有待增强, 具体的model(模型算法)支持还是比较少的
+
+
+3. flair
+   3.0 框架: torch
+   3.1 基本架构: corpus -> model(embedding - graph)
+   3.2 支持: text_classification(文本分类), sequence_tagger(序列标注), similarity_learning(文本相似度), language_model(语言模型), text_regression(文本回归?), hyperopt(超参数优化),
+   3.3 说明: * 早期NLP工具, 主要支持字母语言, english, corpus输入使用torch.utils.data.dataset.Subset
+            * 早期只支持 BYTE_PAIR_EMBEDDINGS, CHARACTER_EMBEDDINGS, CLASSIC_WORD_EMBEDDINGS, ELMO_EMBEDDINGS, FASTTEXT_EMBEDDINGS, ONE_HOT_EMBEDDINGS, TRANSFORMER_EMBEDDINGS等ng
+            * 后期使用transformers支持bert, albert, gpt2等
+            * 主要支持NLP, 也支持图像, 重点是NER任务
+            * 默认model等只是支持了LSTM/CNN等
+            * 独立的可视化, 支持的包括 highlighter(高亮显示), manifold(流行, 降维), ner_html(NER标注), training_curves(画折线图, loss, metrics等)
+            * preprocess按照Label, DataPoint, DataPair, Token, Span, Sentence等区分开
+   3.4 优缺点
+       优点: 支持超参优化/可视化等模式, 支持多标签分类/文本回归等任务, 网络超参可配置/语言模型;
+       缺点: 重点支持英文, 大规模数据不支持, 创建代码相对多一点.
+
+
+
+4. gluon-nlp-0.9.x
+   4.0 框架: mxnet
+   4.1 基本框架:
+   4.2 支持:
+   4.3 说明:
+
+   4.4 优缺点:
+       优点:
+       缺点:
+
+
+5. HanLP
+   5.0 框架: tensotflow, tf.keras
+   5.1 基本框架: file -> tf.data.Dataset -> embedding ->model
+   5.2 支持: classifiers(单分类), parsers(语法分析), taggers(序列标注)
+   5.3 说明:
+           * 作者有比较丰富的中文通用NLP工具经验(Java), 分词/依存句法/词性标注/语义依存等做得比较好, 此外还有;
+           * HanLP分为datasets/components/transform/layers/optimizers/callbacks/losses/metrics/utils/common/pretrained(训练好的模型)模块;
+           * embedding支持bert/albert等, 还有word2vec/fast_text/concat_embed/contextual_embed/n-gram_embed/char-cnn/char-rnn等;
+           * 自定义网站数据快速下载, datasets里边是常见数据集训练/验证/测试语料, pretrained里边是常见任务和场景的训练好的模型;
+           * 社区比较活跃
+
+
+   5.4 优缺点:
+       优点: 性能还是比较好的, Java版经受过工业考验等, 人员/更新稳定,
+       缺点:
+
+
+

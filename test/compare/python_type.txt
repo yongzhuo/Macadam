@@ -1,0 +1,14 @@
+
+# from typing import overload, Any, TypeVar, Generic,Tuple,Callable,Type,_promote,no_type_check,ClassVar
+# from typing import Union, Optional, List, Dict,DefaultDict,Set,Counter,Deque
+
+1. abc
+    1.1 abc模块有以下两个主要功能：
+        某种情况下，判定某个对象的类型，如：isinstance(a, Sized)
+        强制子类必须实现某些方法，即ABC类的派生类
+    1.2 总结
+        abc模块中定义的类兼顾了继承抽象基类与鸭子类型的设计方式。你既可以通过继承Sized来拥有__len__方法，此时instance(对象, Sized)返回True；也可以在自己设计的类中实现__len__，instance(对象, Sized)仍然返回True。
+        对抽象基类来说，需要用到装饰器 @abc.abstractmethod；对于鸭子类型来说，需要重写__subclasshook__魔法方法。
+        以上都是基于元类abc.ABCMeta实现的。顺便提醒，注意import abc与from collections import abc各自的区别。
+
+2.

@@ -1,0 +1,5 @@
+keras-xlnet==0.18.0
+bert4keras==0.7.0
+macropodus==0.0.6
+numpy==1.18.1
+tqdm==4.31.1

@@ -1,0 +1,124 @@
+V2.0 implementation design
+
+I have started the migration to tf2 for Kashgari V2.0. Here are the vision and roadmap.
+
+Same Principle
+V2.0 will be based on the same vision for V1.0, which is to create a clean and simple NLP framework for Academic users, NLP beginners, and Senior NLP developers.
+
+Human-friendly. Kashgari's code is straightforward, well documented, and tested, which makes it very easy to understand and modify.
+Powerful and simple. Kashgari allows you to apply state-of-the-art natural language processing (NLP) models to your text, such as named entity recognition (NER), part-of-speech tagging (PoS) and classification.
+Built-in transfer learning. Kashgari built-in pre-trained BERT and Word2vec embedding models, which makes it very simple to transfer learning to train your model.
+Fully scalable. Kashgari provides a simple, fast, and scalable environment for fast experimentation, train your models and experiment with new approaches using different embeddings and model structure.
+Production Ready. Kashgari could export model with SavedModel format for tensorflow serving, you could directly deploy it on the cloud.
+RoadMap
+ Based on TensorFlow 2.1+ [@BrikerMan]
+ Fully support generator based training (#336 ,#273) [@BrikerMan]
+ Clean code and full document
+ Multi GPU/TPU Support [@BrikerMan]
+ Embeddings
+ Bare Embedding [@BrikerMan]
+ Word Embedding (Load trained W2V) [@BrikerMan]
+ BERT Embedding (Based on bert4keras, support BERT, RoBERTa, ALBERT...) (#316) [@BrikerMan]
+ GPT-2 Embedding
+ FeaturesEmbedding (Support Numeric feature as input)
+ Stacked Embedding (Stack Text embedding and features Embedding)
+ Classification Task
+ Traditional models (CCN/LSTM/GRU) [@BrikerMan]
+ Transformer models (Transformer/Transformer XL/Attention)
+ Labeling Task
+ Traditional models (CCN/LSTM/GRU)
+ Transformer models (Transformer/Transformer XL/Attention)
+ Seq2Seq Task
+ Traditional models (CCN/LSTM/GRU)
+ Transformer models (Transformer/Transformer XL/Attention)
+ Built-in Callbacks [@fxsld]
+ Evaluate Callback
+ Save Best Callback (#331)
+ Support TensorFlow Hub (Optional)
+Contribution
+If you are interested in implementing any part of the RoadMap or have any new ideas about Kashgari V2.0, feel free to comment.
+
+
+2.0实现设计
+
+
+
+我已开始为Kashgari V2.0迁移到tf。以下是愿景和路线图。
+
+
+
+同样的原则
+
+V2.0将基于V1.0的相同愿景，即为学术用户、NLP初学者和高级NLP开发人员创建一个干净简单的NLP框架。
+
+
+
+人性化。喀什加里的代码是直截了当的，有很好的文档记录，并且经过测试，这使得它非常容易理解和修改。
+
+强大而简单。喀什喀里允许您将最先进的自然语言处理（NLP）模型应用于文本，如命名实体识别（NER）、词性标注（PoS）和分类。
+
+内置转移学习。Kashgari内置了经过预训练的BERT和Word2vec嵌入模型，这使得转移学习来训练模型变得非常简单。
+
+完全可扩展。Kashgari提供了一个简单、快速和可扩展的环境，用于快速实验、训练模型和使用不同嵌入和模型结构的新方法进行实验。
+
+生产准备就绪。Kashgari可以为tensorflow服务导出SavedModel格式的模型，您可以直接在云上部署它。
+
+路线图
+
+基于TensorFlow 2.1+[@BrikerMan]
+
+完全支持基于发电机的培训（#336，#273）[@BrikerMan]
+
+清除代码和完整文档
+
+多GPU/TPU支持[@BrikerMan]
+
+嵌入件
+
+裸体嵌入[@BrikerMan]
+
+单词嵌入（负载训练W2V）[@BrikerMan]
+
+BERT嵌入（基于bert4keras，支持BERT，RoBERTa，ALBERT…）（#316）[@BrikerMan]
+
+GPT-2嵌入
+
+特性床上用品（支持输入数字特性）
+
+堆叠嵌入（堆叠文本嵌入和功能嵌入）
+
+分类任务
+
+传统模式（CCN/LSTM/GRU）[@BrikerMan]
+
+变压器型号（变压器/变压器XL/注意）
+
+标记任务
+
+传统模式（CCN/LSTM/GRU）
+
+变压器型号（变压器/变压器XL/注意）
+
+Seq2Seq任务
+
+传统模式（CCN/LSTM/GRU）
+
+变压器型号（变压器/变压器XL/注意）
+
+内置回调[@fxsld]
+
+计算回调
+
+保存最佳回拨（#331）
+
+支持TensorFlow轮毂（可选）
+
+贡献
+
+如果您对实现路线图的任何部分感兴趣，或者对喀什加里2.0版有任何新的想法，请随时发表评论。
+
+
+
+
+
+
