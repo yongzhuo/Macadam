@@ -17,8 +17,8 @@
 
 ## 目录
 * [安装](#安装)
-* [使用方式](#使用方式)
 * [数据](#数据)
+* [使用方式](#使用方式)
 * [TODO](#TODO)
 * [paper](#paper)
 * [参考](#参考)
@@ -33,8 +33,32 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple Macadam
 ```
 
 
+# 数据
+## 数据来源
+  * [ner_clue_2020](https://github.com/CLUEbenchmark/CLUENER2020), CLUENER2020中文细粒度命名实体识别
+  * [ner_people_1998](http://www.icl.pku.edu.cn/icl_res/), 《人民日报》标注语料库中的语料, 1998.01
+  * [baidu_qa_2019](https://github.com/liuhuanyong/MiningZhiDaoQACorpus), 百度知道问答语料
+  * [thucnews](http://thuctc.thunlp.org/), 新浪新闻RSS订阅频道2005-2011年间的历史数据筛
+## 数据格式
+```
+1. 文本分类  (txt格式, 每行为一个json):
+
+{"x": {"text": "人站在地球上为什么没有头朝下的感觉", "texts2": []}, "y": ["教育"]}
+{"x": {"text": "我的小baby", "texts2": []}, "y": ["娱乐"]}
+{"x": {"text": "请问这起交通事故是谁的责任居多小车和摩托车发生事故在无红绿灯", "texts2": []}, "y": ["娱乐"]}
+
+2. 序列标注 (txt格式, 每行为一个json):
+
+{"x": {"text": "海钓比赛地点在厦门与金门之间的海域。", "texts2": []}, "y": ["O", "O", "O", "O", "O", "O", "O", "B-LOC", "I-LOC", "O", "B-LOC", "I-LOC", "O", "O", "O", "O", "O", "O"]}
+{"x": {"text": "参加步行的有男有女，有年轻人，也有中年人。", "texts2": []}, "y": ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]}
+{"x": {"text": "山是稳重的，这是我最初的观念。", "texts2": []}, "y": ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]}
+{"x": {"text": "立案不结、以罚代刑等问题有较大改观。", "texts2": []}, "y": ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]}
+
+```
+
 # 使用方式
   更多样例sample详情见test目录
+## 文本分类, text-classification
 ```bash
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
@@ -73,7 +97,7 @@ if __name__=="__main__":
     # 网络模型架构(Graph), "FineTune", "FastText", "TextCNN", "CharCNN",
     # "BiRNN", "RCNN", "DCNN", "CRNN", "DeepMoji", "SelfAttention", "HAN", "Capsule"
     network_type = "TextCNN"
-    # 嵌入(embedding)类型, "ROOBERTA", "ELECTRA", "RANDOM", "ALBERT", "XLNET", "NEZHA", "GPT2", "WORD", "BERT"
+    # 嵌入(embedding)类型, "ROBERTA", "ELECTRA", "RANDOM", "ALBERT", "XLNET", "NEZHA", "GPT2", "WORD", "BERT"
     embed_type = "BERT"
     # token级别, 一般为"char", 只有random和word的embedding时存在"word"
     token_type = "CHAR"
@@ -87,16 +111,67 @@ if __name__=="__main__":
             network_type=network_type, embed_type=embed_type, token_type=token_type, task=task)
     mm = 0
 ```
+## 序列标注, sequence-labeling
+```bash
+# !/usr/bin/python
+# -*- coding: utf-8 -*-
+# @time    : 2020/5/8 21:33
+# @author  : Mo
+# @function: test trainer of bert
 
 
-# 数据
-  * [ner_clue_2020](https://github.com/CLUEbenchmark/CLUENER2020), CLUENER2020中文细粒度命名实体识别
-  * [ner_people_1998](http://www.icl.pku.edu.cn/icl_res/), 《人民日报》标注语料库中的语料, 1998.01
-  * [baidu_qa_2019](https://github.com/liuhuanyong/MiningZhiDaoQACorpus), 百度知道问答语料
-  * [thucnews](http://thuctc.thunlp.org/), 新浪新闻RSS订阅频道2005-2011年间的历史数据筛
+# 适配linux
+import sys
+import os
+path_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+sys.path.append(path_root)
+## cpu-gpu与tf.keras
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["TF_KERAS"] = "1"
+
+# 地址, tf.keras
+from macadam.conf.path_config import path_embed_bert, path_embed_word2vec_word, path_embed_word2vec_char
+from macadam.conf.path_config import path_root, path_ner_people_1998, path_ner_clue_2020
+from macadam.sl import trainer
+
+
+if __name__=="__main__":
+    # bert-embedding地址, 必传
+    path_embed = path_embed_bert # path_embed_bert, path_embed_word2vec_word, path_embed_word2vec_char
+    path_checkpoint = os.path.join(path_embed + "bert_model.ckpt")
+    path_config = os.path.join(path_embed + "bert_config.json")
+    path_vocab = os.path.join(path_embed + "vocab.txt")
+
+    # # 训练/验证数据地址
+    # path_train = os.path.join(path_ner_people_1998, "train.json")
+    # path_dev = os.path.join(path_ner_people_1998, "dev.json")
+    path_train = os.path.join(path_ner_clue_2020, "ner_clue_2020.train")
+    path_dev = os.path.join(path_ner_clue_2020, "ner_clue_2020.dev")
+    # 网络结构
+    # "CRF", "Bi-LSTM-CRF", "Bi-LSTM-LAN", "CNN-LSTM", "DGCNN", "LATTICE-LSTM-BATCH"
+    network_type = "CRF"
+    # 嵌入(embedding)类型, "ROOBERTA", "ELECTRA", "RANDOM", "ALBERT", "XLNET", "NEZHA", "GPT2", "WORD", "BERT"
+    # MIX,  WC_LSTM时候填两个["RANDOM", "WORD"], ["WORD", "RANDOM"], ["RANDOM", "RANDOM"], ["WORD", "WORD"]
+    embed_type = "RANDOM" 
+    token_type = "CHAR"
+    task = "SL"
+    lr = 1e-5 if embed_type in ["ROBERTA", "ELECTRA", "ALBERT", "XLNET", "NEZHA", "GPT2", "BERT"] else 1e-3
+    # 模型保存目录, 如果不存在则创建
+    path_model_dir = os.path.join(path_root, "data", "model", network_type)
+    if not os.path.exists(path_model_dir):
+        os.mkdir(path_model_dir)
+    # 开始训练
+    trainer(path_model_dir, path_embed, path_train, path_dev,
+            path_checkpoint, path_config, path_vocab,
+            network_type=network_type, embed_type=embed_type,
+            task=task, token_type=token_type,
+            is_length_max=False, use_onehot=False, use_file=False, use_crf=True,
+            layer_idx=[-2], learning_rate=lr,
+            batch_size=30, epochs=12, early_stop=6, rate=1)
+    mm = 0
+```
   
-  
-#TODO
+# TODO
  * 文本分类TC(TextGCN)
  * 序列标注SL(MRC)
  * 关系抽取RE
@@ -135,7 +210,7 @@ if __name__=="__main__":
 * DGCNN:          [Multi-Scale Context Aggregation by Dilated Convolutions](https://arxiv.org/abs/1511.07122)
 * Bi-LSTM-LAN:    [Hierarchically-Reﬁned Label Attention Network for Sequence Labeling](https://arxiv.org/abs/1908.08676v2)
 * LATTICE-LSTM-BATCH:    [An Encoding Strategy Based Word-Character LSTM for Chinese NER](https://www.aclweb.org/anthology/N19-1247/)
-* MRC:            [An Encoding Strategy Based Word-Character LSTM for Chinese NER](https://www.aclweb.org/anthology/N19-1247/)
+* MRC:            [A Unified MRC Framework for Named Entity Recognition](https://arxiv.org/abs/1910.11476v2)
 
 
 # 参考
@@ -146,5 +221,16 @@ if __name__=="__main__":
 * HanLP: [https://github.com/hankcs/HanLP](https://github.com/hankcs/HanLP)
 
 
+# Reference
+For citing this work, you can refer to the present GitHub project. For example, with BibTeX:
+```
+@misc{Macadam,
+    howpublished = {url{https://github.com/yongzhuo/Macadam}},
+    title = {Macadam},
+    author = {Yongzhuo Mo},
+    publisher = {GitHub},
+    year = {2020}
+}
+```
 *希望对你有所帮助!
 

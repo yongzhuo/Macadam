@@ -31,7 +31,7 @@ def thucnews(code_type):
         x = da_sp[1]
         # texts2其实是None,但是为了测试模拟, 所以实际取了值
         # xy = {"x":{"text":x, "texts2":[x[0], x[1:3]]}, "y":y}
-        xy = {"x": {"text": x, "texts2": []}, "y": y}
+        xy = {"x": {"text": x.strip(), "texts2": []}, "y": y}
         xy_json = json.dumps(xy, ensure_ascii=False) + "\n"
         train_data.append(xy_json)
 
@@ -57,7 +57,7 @@ def baidu_qa_2019(code_type):
         y = da_sp[0]
         x = da_sp[1].replace(" ", "")
         # texts2其实是None,但是为了测试模拟, 所以实际取了值
-        xy = {"x": {"text": x, "texts2": []}, "y": [y]}
+        xy = {"x": {"text": x.strip(), "texts2": []}, "y": y}
         xy_json = json.dumps(xy, ensure_ascii=False) + "\n"
         train_data.append(xy_json)
 

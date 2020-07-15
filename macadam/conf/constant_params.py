@@ -40,7 +40,7 @@ hyper_parameters_default = {
             "task": None,                    # 任务类型, "SL"(sequence-labeling), "TC"(text-classification),"RE"(relation-extraction)
             "token_type": "CHAR",            # 级别, 最小单元, 字/词, 填 "CHAR" or "WORD", "NGRAM", 注意:word2vec模式下训练语料要首先切好
             "embed_type": "BERT",            # 级别, 嵌入类型, 还可以填"WORD"、"RANDOM"、 "BERT"、 "ALBERT"、"ROBERTA"、"NEZHA"、"XLNET"、"ELECTRA"、"GPT2"
-            "gpu_memory_fraction": 0.60,     # gpu使用率, 0-1
+            "gpu_memory_fraction": 0.6,     # gpu使用率, 0-1
              },
 "embed": {"layer_idx": [-2],                 # 取bert的layer层输出, -1~-12, 0-11等, eg. 0, 1, 11, -1, -2, -12等
           "path_embed": None,                # 外部embed模型地址, 如word2vec, bert

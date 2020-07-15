@@ -60,9 +60,8 @@ def read_from_columns_and_write_to_macadam(path, path_save):
 
 
 if __name__ == '__main__':
-
+    # code_type = "train", "dev", "test"
     for code_type in ["train", "dev", "test"]:
-        # code_type = "test"
         path_ner = os.path.join(path_ner_people_1998, "{}.txt".format(code_type))
         path_ner_save = os.path.join(path_ner_people_1998, "{}.json".format(code_type))
         read_from_columns_and_write_to_macadam(path_ner, path_ner_save)

@@ -23,3 +23,16 @@ class FastTextGraph(graph):
         self.model = M.Model(inputs=inputs, outputs=self.outputs)
         self.model.summary(132)
 
+
+# 注意: 随着语料库的增加(word, bi-gram,tri-gram)，内存需求也会不断增加，严重影响模型构建速度:
+
+# 一、自己的思路(macadam, 中文):
+# 1. 可以去掉频次高的前后5%的n-gram(, 没有实现)
+# 2. 降低embed_size, 从常规的300变为默认64
+# 3. 将numpy.array转化时候float32改为默认float16
+
+# 二、其他思路(英文)
+# 1. 过滤掉出现次数少的单词
+# 2. 使用hash存储
+# 3. 由采用字粒度变化为采用词粒度(英文)
+

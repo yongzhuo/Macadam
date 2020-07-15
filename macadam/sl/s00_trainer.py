@@ -272,13 +272,15 @@ if __name__=="__main__":
     path_dev = os.path.join(path_ner_clue_2020, "ner_clue_2020.dev")
     # 网络结构
     # "CRF", "Bi-LSTM-CRF", "Bi-LSTM-LAN", "CNN-LSTM", "DGCNN", "LATTICE-LSTM-BATCH"
-    network_type = "CRF"
-    embed_type = "RANDOM" # ["WORD", "RANDOM"] # MIX,  WC_LSTM时候填两个["RANDOM", "WORD"], ["WORD", "RANDOM"], ["RANDOM", "RANDOM"], ["WORD", "WORD"]
+    network_type = "LATTICE-LSTM-BATCH"
+    # 嵌入(embedding)类型, "ROOBERTA", "ELECTRA", "RANDOM", "ALBERT", "XLNET", "NEZHA", "GPT2", "WORD", "BERT"
+    # MIX,  WC_LSTM时候填两个["RANDOM", "WORD"], ["WORD", "RANDOM"], ["RANDOM", "RANDOM"], ["WORD", "WORD"]
+    embed_type = ["RANDOM", "RANDOM"]
     token_type = "CHAR"
-    task = "sl"
+    task = "SL"
     lr = 1e-5 if embed_type in ["ROBERTA", "ELECTRA", "ALBERT", "XLNET", "NEZHA", "GPT2", "BERT"] else 1e-3
     # 模型保存目录, 如果不存在则创建
-    path_model_dir = os.path.join(path_root, "data", "model", f"{network_type}_2020")
+    path_model_dir = os.path.join(path_root, "data", "model", "{network_type}")
     if not os.path.exists(path_model_dir):
         os.mkdir(path_model_dir)
     # 开始训练
@@ -288,6 +290,6 @@ if __name__=="__main__":
             task=task, token_type=token_type,
             is_length_max=False, use_onehot=False, use_file=False, use_crf=True,
             layer_idx=[-2], learning_rate=lr,
-            batch_size=30, epochs=12, early_stop=6, rate=1)
+            batch_size=6, epochs=3, early_stop=6, rate=1)
     mm = 0
 

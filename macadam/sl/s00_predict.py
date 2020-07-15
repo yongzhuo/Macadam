@@ -34,7 +34,7 @@ import os
 # custom_objects = keras.utils.get_custom_objects()
 
 
-class ModelPredict():
+class ModelPredict:
     def __init__(self, path_dir: str):
         """
         init, 序列标注任务模型预测类
@@ -42,7 +42,7 @@ class ModelPredict():
         self.path_model_info = os.path.join(path_dir, "macadam.info")
         self.path_model_h5 = os.path.join(path_dir, "macadam.h5")
         self.path_dir = path_dir
-        os.environ["MACADAM_LEVEL"] = "PREDICT"
+        # os.environ["MACADAM_LEVEL"] = "PREDICT"
         self.load_tokenizer()
         self.load_model()
 
@@ -210,14 +210,107 @@ class ModelPredict():
         mertics, report = metrics_report(y_true=labels_true, y_pred=labels_pred)
         return mertics, report
 
+    def explain_pos(self, words0, tag1):
+        res = []
+        ws = ""
+        start_pos = 0
+        end_pos = 0
+        types = ""
+        sentence = ""
+        for i in range(len(tag1)):
+            if tag1[i].startswith("S-"):
+                ws += words0[i]
+                start_pos = len(sentence)
+                sentence += words0[i]
+                end_pos = len(sentence) - 1
+                types = tag1[i][2:]
+                res.append([ws, start_pos, end_pos, types])
+                ws = ""
+                types = ""
+            if tag1[i].startswith("B-"):
+                if len(ws) > 0:
+                    res.append([ws, start_pos, end_pos, types])
+                    ws = ""
+                    types = ""
+                if len(ws) == 0:
+                    ws += words0[i]
+                    start_pos = len(sentence)
+                    sentence += words0[i]
+                    end_pos = len(sentence) - 1
+                    types = tag1[i][2:]
 
-if __name__ == '__main__':
+            elif tag1[i].startswith("M-"):
+                if len(ws) > 0 and types == tag1[i][2:]:
+                    ws += words0[i]
+                    sentence += words0[i]
+                    end_pos = len(sentence) - 1
+                elif len(ws) > 0 and types != tag1[i][2:]:
+                    res.append([ws, start_pos, end_pos, types])
+                    ws = ""
+                    types = ""
+                if len(ws) == 0:
+                    ws += words0[i]
+                    start_pos = len(sentence)
+                    sentence += words0[i]
+                    end_pos = len(sentence) - 1
+                    types = tag1[i][2:]
+
+            elif tag1[i].startswith("E-"):
+                if len(ws) > 0 and types == tag1[i][2:]:
+                    ws += words0[i]
+                    sentence += words0[i]
+                    end_pos = len(sentence) - 1
+                    res.append([ws, start_pos, end_pos, types])
+                    ws = ""
+                    types = ""
+                if len(ws) > 0 and types != tag1[i][2:]:
+                    res.append([ws, start_pos, end_pos, types])
+                    ws = ""
+                    ws += words0[i]
+                    start_pos = len(sentence)
+                    sentence += words0[i]
+                    end_pos = len(sentence) - 1
+                    types = tag1[i][2:]
+                    res.append([ws, start_pos, end_pos, types])
+                    ws = ""
+                    types = ""
+            elif tag1[i] == "O":
+                sentence += words0[i]
+            if i == len(tag1) - 1 and len(ws) > 0:
+                res.append([ws, start_pos, end_pos, types])
+                ws = ""
+                types = ""
+
+        res1 = []
+        for s in res:
+            s1 = {}
+            s1["word"] = s[0]
+            s1["start_pos"] = s[1]
+            s1["end_pos"] = s[2]
+            s1["entity_type"] = s[3]
+            res1.append(s1)
+        res2 = {}
+        textss = "".join(words0)
+        res2["text"] = textss
+        res2["label_results"] = res1
+        return res2
+
+
+if __name__ == "__main__":
     from macadam.conf.path_config import path_root
 
     # 模型目录与初始化
-    path_dir = os.path.join(path_root, "data", "model", "CRF_2020")
+    path_dir = os.path.join(path_root, "data", "model", "CRF")
     mp = ModelPredict(path_dir)
-
+    # streamer = ThreadedStreamer(predict_function=mp.predict,
+    #                             batch_size=32,
+    #                             max_latency=0.01,)
+    # streamer = Streamer(predict_function_or_model=mp.predict,
+    #                     batch_size=32,
+    #                     max_latency=0.01,
+    #                     worker_num=1,
+    #                     cuda_devices=(0),
+    #                     mp_start_method="fork")
     # 训练/验证数据地址
     path_train = os.path.join(path_ner_people_1998, "train.json")
     path_dev = os.path.join(path_ner_people_1998, "dev.json")

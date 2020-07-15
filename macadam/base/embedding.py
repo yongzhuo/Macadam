@@ -96,7 +96,7 @@ class RandomEmbedding(BaseEmbedding):
             None
         """
         hyper_parameters["sharing"].update({"embed_type": "RANDOM",})
-        self.ngram_ns = hyper_parameters.get("embed", {}).get("ngram_ns", [2, 3])  # ngram信息, 根据语料获取
+        self.ngram_ns = hyper_parameters.get("embed", {}).get("ngram_ns", [2])  # ngram信息, 根据语料获取
         super().__init__(hyper_parameters)
 
     def build_tokenizer(self, path_vocab: str=None):
@@ -111,6 +111,7 @@ class RandomEmbedding(BaseEmbedding):
         path_vocab = "" if not path_vocab else path_vocab
         # constant sign
         self.token2idx = self.token_dict.copy()
+        # token2count = {}
         # count = len(self.token2idx) - 1
         # 默认的字符(char)
         if "default_character.txt" in path_vocab:
@@ -149,6 +150,10 @@ class RandomEmbedding(BaseEmbedding):
                             self.token2idx[line] = len(self.token2idx)
                             # count = count + 1
                             # self.token2idx[line] = count
+                        ## 统计字典频率
+                        # token2count[line] = 1 if line not in token2count else token2count[line] + 1
+                    # if len(self.token2idx) > 320000:
+                    #     break
         else:
             # raise RuntimeError("your input path_embed is wrong, it must be csv, txt or tsv")
             logger.info("path_corpus is not exists!")
@@ -183,7 +188,7 @@ class RandomEmbedding(BaseEmbedding):
         # 只选择corpus里边的token, 可以防止embedding矩阵OOM
         for _ in tqdm(range(len(self.token2idx)-1)):
             embedding_matrix.append(np.random.uniform(-0.5, 0.5, self.embed_size))
-        embedding_matrix = np.array(embedding_matrix)
+        embedding_matrix = np.array(embedding_matrix, dtype=np.float16)
         return embedding_matrix
 
     def build_embedding(self, path_checkpoint: str=None,
@@ -220,6 +225,7 @@ class RandomEmbedding(BaseEmbedding):
                                   weights=[embedding_matrix],
                                   )(self.input)
         self.model = M.Model(self.input, self.output)
+        del embedding_matrix
 
     def cut_and_index(self, text: str):
         """
@@ -453,8 +459,8 @@ class BertEmbedding(BaseEmbedding):
         features_layers = [self.output_layers[li] for li in self.layer_idx]
         # 输出layer层的merge方式
         if len(features_layers) == 1:
-            # embedding_layer = L.AveragePooling1D()([features_layers[0], features_layers[0]])
-            embedding_layer = features_layers[0]
+            # embedding_layer = L.AveragePooling1D()(features_layers[0])
+            embedding_layer = L.Lambda(lambda x:x)(features_layers[0])
         elif self.merge_type == "concat":
             embedding_layer = L.Concatenate()(features_layers)
         elif self.merge_type == "add":

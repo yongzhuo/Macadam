@@ -50,3 +50,30 @@ mercury	n.水银，汞
 
 
 
+
+3	macabre	adj. 骇人的，可怖的
+4	macadam	n. （铺路用的）碎石，碎石路
+5	macadamize	vt. 简易地铺装,以碎石铺
+6	macaroni	n. 通心面,纨绔子弟
+7	macaroon	n. 蛋白杏仁饼干
+8	macaw	金刚鹦鹉
+9	mace	n. 权杖
+10	macerate	v. 浸软，消瘦
+11	mach	n. 马赫(速度单位)
+12	machete	n. 弯刀
+13	Machiavellian	a. 马基雅弗利的,权谋术的
+14	machination	n. 阴谋
+15	machinations	n. 阴谋；诡计
+16	machine	n.机器；机械
+17	machinery	n.(总称)机器；机构
+18	machinist	n. 机械师,机械安装修理工,机械工
+19	mackerel	n. 鲭
+20	mackintosh	n. 雨衣；防水胶布
+21	macro	n. 宏，宏功能，宏指令
+22	macrocosm	n. 宇宙，宏观世界
+23	macroeconomics	n. 宏观经济学
+24	macros	n. 宏命令(指令)
+25	macroscopic	a. 肉眼可见的，宏观的
+26	macula	n. (皮肤上的)斑点
+27	maculate	弄污
+

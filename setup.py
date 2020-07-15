@@ -23,7 +23,7 @@ with codecs.open("requirements.txt", "r", "utf-8") as reader:
     install_requires = list(map(lambda x: x.strip(), reader.readlines()))
 
 setup(name=NAME,
-        version="0.0.1",
+        version="0.1.1",
         description=DESCRIPTION,
         long_description=long_description,
         long_description_content_type="text/markdown",
@@ -62,4 +62,7 @@ if __name__ == "__main__":
 
 # nohup python s00_trainer.py > trainer.log 2>&1 &
 # pip install -i https://pypi.tuna.tsinghua.edu.cn/simple tensorflow==1.15.2
+
+# pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements-all.txt
+
 

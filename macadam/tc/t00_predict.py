@@ -33,7 +33,7 @@ class ModelPredict():
         self.path_model_info = os.path.join(path_dir, "macadam.info")
         self.path_model_h5 = os.path.join(path_dir, "macadam.h5")
         self.path_dir = path_dir
-        os.environ["MACADAM_LEVEL"] = "PREDICT"
+        # os.environ["MACADAM_LEVEL"] = "PREDICT"
         self.load_tokenizer()
         self.load_model()
 
@@ -158,6 +158,7 @@ class ModelPredict():
         # 获取评估指标/报告打印
         mertics, report = metrics_report(y_true=labels_true, y_pred=labels_pred)
         return mertics, report
+
 
 if __name__ == '__main__':
     from macadam.conf.path_config import path_root, path_tc_baidu_qa_2019

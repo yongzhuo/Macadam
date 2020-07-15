@@ -11,7 +11,7 @@ import os
 path_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.append(path_root)
 ## cpu-gpu与tf.keras
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ["TF_KERAS"] = "1"
 # 地址, tf.keras
 from macadam.conf.path_config import path_embed_bert, path_embed_word2vec_word, path_embed_word2vec_char
@@ -65,9 +65,9 @@ def trainer(path_model_dir, path_embed, path_train, path_dev,
     # 获取embed和graph的类
     Embedding = embedding_map[embed_type.upper()]
     Graph = graph_map[network_type.upper()]
+    print(os.environ["CUDA_VISIBLE_DEVICES"])
 
     # 删除先前存在的模型/embedding微调模型等
-    time_start = time.time()
     # bert-embedding等初始化
     params = {"embed": {"path_embed": path_embed,
                         "layer_idx": layer_idx,
@@ -100,6 +100,8 @@ def trainer(path_model_dir, path_embed, path_train, path_dev,
     embed.build_embedding(path_checkpoint=path_checkpoint,
                           path_config=path_config,
                           path_vocab=path_vocab)
+    print(os.environ["CUDA_VISIBLE_DEVICES"])
+
     # 模型graph初始化
     graph = Graph(params)
 
@@ -129,7 +131,11 @@ def trainer(path_model_dir, path_embed, path_train, path_dev,
         from macadam.base.preprocess import ListGenerator as generator_xy
         logger.info("强制使用序列最大长度为{0}, 即文本最大截断或padding长度".format(length_max))
 
+    print(os.environ["CUDA_VISIBLE_DEVICES"])
     logger.info("预处理类初始化完成")
+    if not pxy.length_max:
+        print(pxy.length_max)
+        pxy.length_max = 33
     # 更新最大序列长度, 类别数
     graph.length_max = pxy.length_max
     graph.label = len(pxy.l2i)
@@ -145,6 +151,8 @@ def trainer(path_model_dir, path_embed, path_train, path_dev,
                               path_config=path_config,
                               path_vocab=path_vocab)
         pxy.embedding = embed
+    print(os.environ["CUDA_VISIBLE_DEVICES"])
+
     # 更新维度空间
     graph.embed_size = embed.embed_size
     graph.hyper_parameters["sharing"]["embed_size"] = graph.embed_size
@@ -156,8 +164,13 @@ def trainer(path_model_dir, path_embed, path_train, path_dev,
     logger.info("网络(network or graph)初始化完成")
     logger.info("开始训练: ")
     # 训练
+    time_start = time.time()
+    print(os.environ["CUDA_VISIBLE_DEVICES"])
+
     graph.fit(pxy, generator_xy, train_data, dev_data=dev_data, rate=rate)
+    time_collection = str(time.time()-time_start)
     logger.info("训练完成, 耗时:" + str(time.time()-time_start))
+    return time_collection
 
 
 if __name__=="__main__":
@@ -172,16 +185,18 @@ if __name__=="__main__":
     # path_dev = os.path.join(path_tc_thucnews, "dev.json")
     path_train = os.path.join(path_tc_baidu_qa_2019, "train.json")
     path_dev = os.path.join(path_tc_baidu_qa_2019, "dev.json")
+    # print(path_train)
     # 网络结构
     # "Finetune", "FastText", "TextCNN", "CharCNN", "BiRNN", "RCNN", "DCNN", "CRNN",
     # "DeepMoji", "SelfAttention", "HAN", "Capsule"
-    network_type = "TextCNN"
+    network_type = "FASTTEXT"
     # 嵌入(embedding)类型, "ROOBERTA", "ELECTRA", "RANDOM", "ALBERT", "XLNET", "NEZHA", "GPT2", "WORD", "BERT"
-    embed_type = "word"
-    # token级别, 一般为"char", 只有random和word的embedding时存在"word", 大小写都可以
-    token_type = "char"
+    # 备注: random(n-gram)时候embed_size=64, 其中ngram为bigram
+    embed_type = "RANDOM"
+    # token级别, 一般为"char"或"ngram", 只有random和word的embedding时存在"word", 大小写都可以
+    token_type = "NGRAM"
     # 任务, "TC", "SL", "RE"
-    task = "tc"
+    task = "TC"
     # 学习率
     lr = 1e-5 if embed_type in ["ROBERTA", "ELECTRA", "ALBERT", "XLNET", "NEZHA", "GPT2", "BERT"] else 1e-3
 
@@ -192,7 +207,7 @@ if __name__=="__main__":
     # 开始训练
     trainer(path_model_dir, path_embed, path_train, path_dev, path_checkpoint, path_config, path_vocab,
             network_type=network_type, embed_type=embed_type, token_type=token_type, task=task,
-            is_length_max=False, use_onehot=False, use_file=True, layer_idx=[-1],
-            learning_rate=lr, batch_size=30,
+            is_length_max=False, use_onehot=False, use_file=False, layer_idx=[-1], embed_size=64,
+            learning_rate=lr, batch_size=128,
             epochs=3, early_stop=3, rate=1)
     mm = 0

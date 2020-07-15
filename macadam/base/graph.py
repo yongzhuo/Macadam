@@ -85,7 +85,7 @@ class graph(Config):
         # 保存所有需要的参数, 包括macadam版本/模型标签字典
         self.hyper_parameters["train"]["is_training"] = False  # 预测时候这些设为False
         self.hyper_parameters["train"]["trainable"] = False
-        self.hyper_parameters["graph"]["dropout"] = 0.0
+        self.hyper_parameters["graph"]["dropout"] = 0
         # 保存的超参数, info
         model_info = {"__class__": self.__class__.__name__,
                       "__version__": __version__,
@@ -117,7 +117,8 @@ class graph(Config):
                                  callbacks=self.callback(monitor),
                                  epochs=self.epochs,
                                  validation_data=lg_dev.forfit() if lg_dev else None,
-                                 validation_steps=lg_dev.__len__() if lg_dev else None)
+                                 validation_steps=lg_dev.__len__() if lg_dev else None,
+                                 )
         # 保存crf状态转移矩阵
         if self.use_crf and self.trans:
             model_info = {"__class__": self.__class__.__name__,

@@ -18,7 +18,6 @@ for code_type in ["train", "dev"]:
     # path_dev = os.path.join(path_ner_clue_2020, "dev.json")
     # path_tet = os.path.join(path_ner_clue_2020, "tet.json")
 
-
     data_train = txt_read(path_train)
     res = []
     for data_line in data_train:
@@ -36,6 +35,13 @@ for code_type in ["train", "dev"]:
                     end = v2_idx[1]
                     if start==end:
                         y[start] = "S-{}".format(k)
+                    ####  BMES标注法  ###
+                    # else:
+                    #     y[start:end] = ["M-{}".format(k)] * len(k2)
+                    #     y[start] = "B-{}".format(k)
+                    #     y[end] = "E-{}".format(k)
+
+                    ####  BIO标注法  ###
                     else:
                         y[start:end] = ["I-{}".format(k)] * len(k2)
                         y[start] = "B-{}".format(k)

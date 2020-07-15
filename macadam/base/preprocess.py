@@ -6,7 +6,7 @@
 
 
 from macadam.conf.constant_params import UNK, PAD, MASK, CLS, SEP, PAD, UNK, BOS, EOS, WC, SL, TC, RE
-from macadam.base.utils import save_json, load_json, padding_sequences
+from macadam.base.utils import save_json, load_json, dict_sort, padding_sequences
 from macadam.conf.constant_params import EMBEDDING_TYPE
 from macadam.conf.path_config import path_model_dir
 from macadam.conf.logger_config import logger
@@ -16,8 +16,10 @@ from bert4keras.tokenizers import Tokenizer
 from bert4keras.snippets import is_string
 
 from typing import Iterable, List, Dict, Any
+from collections import Counter, OrderedDict
 from tqdm import tqdm
 import numpy as np
+# import threading
 import random
 import json
 import os
@@ -294,8 +296,8 @@ class ListGenerator(Iterable):
         batch_x_idx, batch_y_idx = [], []
         for line in data_yield: # 对x,y进行数据预处理
             line_json = json.loads(line)
-            x_id = self.preprocess_xy.preprocess_x(line_json.get("x"))
-            y_id = self.preprocess_xy.preprocess_y(line_json.get("y"))
+            x_id = self.preprocess_xy.preprocess_x(line_json.get("x", {}))
+            y_id = self.preprocess_xy.preprocess_y(line_json.get("y", {}))
             batch_x_idx.append(x_id)
             batch_y_idx.append(y_id)
             # yiel when full, 批尺寸满了则处理
@@ -545,6 +547,7 @@ class FileGenerator(Iterable):
         self.shuffle = shuffle
         self.len_data = len_data
         self.encoding = encoding
+        # self.lock = threading.Lock()
 
     def __iter__(self):
         """
@@ -633,6 +636,7 @@ class FileGenerator(Iterable):
         """
         repeat when fit
         """
+        # with self.lock:
         while True:
             for d in self.__iter__():
                 yield d
@@ -721,6 +725,7 @@ class FilePrerocessXY:
         if path and os.path.exists(path):
             self.path = path
         # 统计类别标签, count label
+        ys_counter = []
         ys = []
         with open(self.path, "r", encoding=self.encoding) as fr:
             for xy in tqdm(fr, desc="build dict of l2i"):
@@ -730,10 +735,16 @@ class FilePrerocessXY:
                     for yi in y:
                         if yi not in ys:
                             ys.append(yi)
+                    ys_counter += y
                 else:
                     if y not in ys:
                         ys.append(y)
+                    ys_counter.append(y)
             fr.close()
+        # 类别统计
+        ys_counter_dict = dict(Counter(ys_counter))
+        ys_counter_dict_sort = dict_sort(ys_counter_dict)
+        logger.info(json.dumps(ys_counter_dict_sort, ensure_ascii=False, indent=4))
         # 创建字典, create dict
         for ysc in ys:
             self.l2i[ysc] = len(self.l2i)

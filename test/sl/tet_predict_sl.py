@@ -23,26 +23,27 @@ import os
 
 if __name__ == '__main__':
     # 模型加载, load model
-    network = "CRF_2020" # "CRF", "Bi-LSTM-CRF", "Bi-LSTM-LAN", "CNN-LSTM", "DGCNN", "LATTICE-LSTM-BATCH"
+    network = "CRF" # "CRF", "Bi-LSTM-CRF", "Bi-LSTM-LAN", "CNN-LSTM", "DGCNN", "LATTICE-LSTM-BATCH"
     path_dir = os.path.join(path_root, "data", "model", network)
     mp = ModelPredict(path_dir)
     # 训练/验证数据地址
-    # path_train = os.path.join(path_ner_people_1998, "train.json")
-    # path_dev = os.path.join(path_ner_people_1998, "dev.json")
-    path_train = os.path.join(path_ner_clue_2020, "ner_clue_2020.train")
-    path_dev = os.path.join(path_ner_clue_2020, "ner_clue_2020.dev")
+    path_train = os.path.join(path_ner_people_1998, "train.json")
+    path_dev = os.path.join(path_ner_people_1998, "dev.json")
+    path_tet = os.path.join(path_ner_people_1998, "text.json")
+    # path_train = os.path.join(path_ner_clue_2020, "ner_clue_2020.train")
+    # path_dev = os.path.join(path_ner_clue_2020, "ner_clue_2020.dev")
     # sample
     texts = [{"text": "你的一腔热情，别人只道是狼心狗肺"
                       "一切往事，皆为序章"
                       "never say never"
                       "那就这样了吧"
-                      "再见，北京"
-                      ,
-              "texts2": []}]
+                      "再见，北京",
+              "texts2": []}
+             ]
     res = mp.predict(texts)
     print(res)
     # evaluate
-    datas_dev = txt_read(path_dev)
+    datas_dev = txt_read(path_tet)
     print("evaluate开始！")
     datas_dev = [json.loads(dd.strip()) for dd in datas_dev]
     metrics, report = mp.evaluate(datas_dev)
