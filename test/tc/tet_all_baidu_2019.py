@@ -5,9 +5,11 @@
 # @function:
 
 
-# 适配linux
+# 适配linux, cpu-gpu与tf.keras
 import sys
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["TF_KERAS"] = "1"
 path_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.append(path_root)
 # path
@@ -19,9 +21,7 @@ import os
 from macadam.base.utils import txt_read, txt_write, load_json, save_json
 from macadam.tc import ModelPredict
 import json
-## cpu-gpu与tf.keras
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["TF_KERAS"] = "1"
+
 
 
 if __name__=="__main__":

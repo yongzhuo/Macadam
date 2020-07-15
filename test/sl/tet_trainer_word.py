@@ -38,7 +38,7 @@ if __name__=="__main__":
     # 网络模型架构(Graph), # "CRF", "Bi-LSTM-CRF", "Bi-LSTM-LAN", "CNN-LSTM", "DGCNN", "LATTICE-LSTM-BATCH"
     network_type = "Bi-LSTM-CRF"
     # 嵌入(embedding)类型, "ROOBERTA", "ELECTRA", "RANDOM", "ALBERT", "XLNET", "NEZHA", "GPT2", "WORD", "BERT"
-    embed_type = "BERT"
+    embed_type = "RANDOM"
     # token级别, 一般为"CHAR", 只有random和word的embedding时存在"word"
     token_type = "CHAR"
     # 任务, "TC", "SL", "RE"
@@ -48,7 +48,7 @@ if __name__=="__main__":
     # 开始训练, 可能前几轮loss较大acc较低, 后边会好起来
     trainer(path_model_dir, path_embed, path_train, path_dev, path_checkpoint, path_config, path_vocab,
             network_type=network_type, embed_type=embed_type, token_type=token_type, task=task,
-            is_length_max=False, use_onehot=False, use_file=False, use_crf=True,
+            is_length_max=False, use_onehot=True, use_file=False, use_crf=True,
             embed_size=300, layer_idx=[-2], learning_rate=5e-5, batch_size=16,
             epochs=32, early_stop=6, rate=1)
     mm = 0

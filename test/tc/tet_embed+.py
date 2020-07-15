@@ -5,9 +5,11 @@
 # @function: test embedding(bert4keras, not Embedding) + finetune(write freedom)
 
 
-# 适配linux
+# 适配linux, cpu-gpu与tf.keras
 import sys
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_KERAS"] = "1"
 path_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 sys.path.append(path_root)
 # 地址, tf.keras
@@ -22,10 +24,6 @@ from macadam import keras, K, L, M, O, C
 # 计算时间
 import time
 
-
-# cpu-gpu与tf.keras
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-os.environ["TF_KERAS"] = "1"
 
 # bert-embedding地址, 必传
 path_embed = "D:/soft_install/dataset/bert-model/chinese_L-12_H-768_A-12"
