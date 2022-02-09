@@ -1,7 +1,7 @@
 keras-xlnet==0.18.0
 bert4keras==0.7.0
 macropodus==0.0.6
-tensorflow-gpu==1.15.2
+tensorflow-gpu==2.5.3
 keras==2.3.1
 matplotlib==3.2.0
 seaborn==0.10.1
